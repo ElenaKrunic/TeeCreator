@@ -30,12 +30,55 @@ function Customizer() {
       case "colorpicker":
         return <ColorPicker/>
       case "filepicker":
-        return <FilePicker/>
+        return <FilePicker
+        file={file}
+        setFile={setFile}
+        readFile={readFile}
+        />
       case "aipicker":
         return <AIPicker/>
       default:
         return null;
     }
+  }
+
+  const handleDecals = (type, result) => {
+    const decalType = DecalTypes[type];
+
+    state[decalType.stateProperty] = result;
+
+    if(!activeFilterTab[decalType.filterTab]) {
+      handleActiveFilterTab(decalType.filterTab)
+    }
+  }
+
+  const handleActiveFilterTab = (tabName) => {
+    switch (tabName) {
+      case "logoShirt":
+        state.isLogoTexture = !activeFilterTab[tabName];
+        break;
+      case "stylishShirt":
+        state.isFullTexture = !activeFilterTab[tabName];
+      default:
+        state.isLogoTexture = true;
+        state.isFullTexture = false;
+    }
+
+    //after setting the state, activeFilter tab is updated
+    setActiveFilterTab((prevState) => {
+      return {
+        ...prevState,
+        [tabName] : !prevState[tabName]
+      }
+    })
+  }
+
+  const readFile = (type) => {
+    reader(file)
+      .then((result) => {
+        handleDecals(type, result);
+        setActiveEditorTab("");
+      })
   }
 
   return (
@@ -82,8 +125,8 @@ function Customizer() {
                 key={tab.name}
                 tab={tab}
                 isFilterTab
-                isActiveTab=""
-                handleClick={() => {}}
+                isActiveTab={activeFilterTab[tab.name]}
+                handleClick={() => handleActiveFilterTab(tab.name)}
               ></Tab>
             ))}
           </motion.div>
