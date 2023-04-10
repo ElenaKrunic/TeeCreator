@@ -1,2 +1,3 @@
 npm create vite @latest -- --template react client 
 tailwind css
+open ai - dall.e
